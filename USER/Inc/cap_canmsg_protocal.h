@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 /* Message send to capacitor module */
-#define CAPCAN_RXMSG_ID 0x2C7  //CAN ID
+#define CAPCAN_RXMSG_ID 0x2c7  //CAN ID
 
 //ALL UNITS IN watt, multiplies by 100
 
@@ -28,7 +28,7 @@ typedef struct capcan_rx_t{
 
 /*Message come from capacitor module */
 /*Expected message frequency = 100Hz */
-#define CAPCAN_TXMSG_ID 0x2C8  //CAN ID
+#define CAPCAN_TXMSG_ID 0x500 //CAN ID
 
 typedef struct capcan_tx_t{
     uint16_t max_discharge_power;
