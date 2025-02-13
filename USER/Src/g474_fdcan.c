@@ -139,7 +139,7 @@ void send_capinfo(){
   }
 }
 
-void protocol_pack (uint8_t * sendBuffer, uint8_t cmdID, uint8_t *data) {
+void protocol_pack (uint8_t * sendBuffer, uint16_t cmdID, uint8_t *data) {
   int index = 0;
   sendBuffer[index++] = 0xA5;
   sendBuffer[index++] = dataLength & 0xFF;
@@ -170,7 +170,7 @@ const unsigned char CRC8_TAB[256] = {
     0x97, 0xc9, 0x4a, 0x14, 0xf6, 0xa8, 0x74, 0x2a, 0xc8, 0x96, 0x15, 0x4b, 0xa9, 0xf7, 0xb6, 0xe8, 0x0a, 0x54, 0xd7, 0x89, 0x6b, 0x35,
 };
 
-unsigned char Get_CRC8_Check_Sum(unsigned char *pchMessage, unsigned int dwLength) {
+uint8_t Get_CRC8_Check_Sum(unsigned char *pchMessage, unsigned int dwLength) {
     unsigned char ucCRC8 = CRC8_INIT;
     unsigned char ucIndex;
     while (dwLength--) {
@@ -203,7 +203,7 @@ const unsigned short wCRC_Table[256] = {
 ** Input: Data to check,channel length, initialized checksum
 ** Output: CRC checksum
 */
-unsigned short Get_CRC16_Check_Sum(unsigned char *pchMessage, unsigned int dwLength) {
+uint16_t Get_CRC16_Check_Sum(unsigned char *pchMessage, unsigned int dwLength) {
     unsigned short wCRC = CRC_INIT;
     unsigned char  chData;
     if (pchMessage == 0) {
