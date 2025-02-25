@@ -6,7 +6,7 @@ OCDSCRIPT_PATH = $(subst \,/,$(OPENOCD_HOME))/share/openocd/scripts
 
 PROJECT = supercapv4
 TARGET = stm32g4x
-INTERFACE = stlink-v2
+INTERFACE = cmsis-dap
 
 OCD = openocd
 ELF = build/$(PROJECT).elf
@@ -14,8 +14,8 @@ ELF = build/$(PROJECT).elf
 default: load
 
 load: build_code
-	$(OCD) -f $(OCDSCRIPT_PATH)/interface/$(INTERFACE).cfg \
-	 -f  $(OCDSCRIPT_PATH)/target/$(TARGET).cfg \
+	$(OCD) -f "$(OCDSCRIPT_PATH)/interface/$(INTERFACE).cfg" \
+	 -f  "$(OCDSCRIPT_PATH)/target/$(TARGET).cfg" \
 	 -c "program $(ELF) verify reset exit"
 
 build_code:
