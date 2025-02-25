@@ -3,8 +3,8 @@
     {
       "name": "windows-gcc-x64",
       "includePath": [
-        "D:/STM_Repos/PSP_supercapacitor/**",
-        "D:/STM_Repos/PSP_supercapacitor/Drivers/STM32G4xx_HAL_Driver/Inc",
+        "D:/BOX/RV_Respo/PSP_supercapacitor/**",
+        "D:/BOX/RV_Respo/PSP_supercapacitor/Drivers/STM32G4xx_HAL_Driver/Inc",
         "${vcpkgRoot}/x64-windows/include"
       ],
       "defines": [

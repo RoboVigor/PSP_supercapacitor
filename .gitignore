@@ -1,5 +1,5 @@
 build
-/.vscode/launch.json
+/.vscode/*
 
 
 *.o
