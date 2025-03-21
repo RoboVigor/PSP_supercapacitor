@@ -49,6 +49,7 @@ void MX_UART4_Init(void)
   huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart4.Init.ClockPrescaler = UART_PRESCALER_DIV1;
   huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  HAL_UART_MspInit(&huart4);
   if (HAL_UART_Init(&huart4) != HAL_OK)
   {
     Error_Handler();
@@ -68,6 +69,7 @@ void MX_UART4_Init(void)
   /* USER CODE BEGIN UART4_Init 2 */
 
   /* USER CODE END UART4_Init 2 */
+  
 
 }
 

@@ -1,6 +1,7 @@
 #include "g474_fdcan.h"
 #include "dcdc.h"
 #include "cap_canmsg_protocal.h"
+#include "stdlib.h"
 
 #define dataLength 8
 
@@ -21,12 +22,20 @@ volatile uint8_t recv_num=233;
 FDCAN_FilterTypeDef sFilterConfig1;
 FDCAN_FilterTypeDef sFilterConfig2;
 
+uint8_t *sendBuffer;
+uint8_t recieiveBuffer[8]={0};
+
 /* USER CODE BEGIN 4 */
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs){
   static FDCAN_RxHeaderTypeDef rx_header;
-  HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &rx_header, (uint8_t *)&rxmsg);
-  if(*(&rx_header.Identifier) == CAPCAN_TXMSG_ID){
-    dcdc_update_power_limit(((float)rxmsg.power_target)/100.0f);
+  HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &rx_header, recieiveBuffer);
+
+  if(*(&rx_header.Identifier) == CAPCAN_RXMSG_ID){
+    for(int i =0; i < 8; i++){
+      rxmsg.data[i] = recieiveBuffer[i];
+    }
+    // HAL_UART_Transmit_DMA(&huart4, rxmsg.data, 8);
+    dcdc_update_power_limit(((float)rxmsg.power_target));
   }
 }
 
@@ -81,6 +90,8 @@ void fdcan2_config(void)
 
   HAL_FDCAN_Start(&hfdcan2);
   HAL_FDCAN_ActivateNotification(&hfdcan2, FDCAN_IT_RX_FIFO0_NEW_MESSAGE,0);
+  //初始化发送缓冲
+  sendBuffer = (uint8_t *)malloc(17);
 }
 
 typedef struct {
@@ -99,7 +110,7 @@ uint8_t can_dlc2len(uint32_t RxHeader_DataLength)
   return dlc2len[RxHeader_DataLength>>16];
 }
 
-void fdcan2_transmit(uint32_t can_id, uint32_t DataLength, uint8_t tx_data[])
+void fdcan2_transmit(uint32_t can_id, uint32_t DataLength, uint8_t *tx_data)
 {
   TxHeader2.Identifier = can_id;
   TxHeader2.IdType = FDCAN_EXTENDED_ID;
@@ -109,7 +120,7 @@ void fdcan2_transmit(uint32_t can_id, uint32_t DataLength, uint8_t tx_data[])
   TxHeader2.TxFrameType = FDCAN_DATA_FRAME;
   TxHeader2.DataLength = DataLength;
   TxHeader2.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-  TxHeader2.BitRateSwitch = FDCAN_BRS_ON;
+  TxHeader2.BitRateSwitch = FDCAN_BRS_OFF;
   TxHeader2.FDFormat = FDCAN_CLASSIC_CAN;
   TxHeader2.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
   TxHeader2.MessageMarker = 0;	//marker++;	//Tx Event FIFO Use
@@ -121,20 +132,21 @@ void fdcan2_transmit(uint32_t can_id, uint32_t DataLength, uint8_t tx_data[])
 }
 
 void send_capinfo(){
-  txmsg.base_power=(int)(data.i_tot*data.v_bus*100.0f);
-  txmsg.cap_state=state;
+  txmsg.base_power=0x20; //(int)(data.i_tot*data.v_bus*100.0f);
+  txmsg.cap_state=1; //state;
 
   float maxi=discharge_maxi<0.1f?0.05f:discharge_maxi;
-  txmsg.max_discharge_power=(int)(maxi*data.v_bus*100.0f);
+  txmsg.max_discharge_power=0xa0; //(int)(maxi*data.v_bus*100.0f);
 
   float all_energy=(BAT_FULL_VOL*BAT_FULL_VOL-BAT_UVP_STARTUP_THRE*BAT_UVP_STARTUP_THRE);
   float remaining_energy=(data.v_cap*data.v_cap-BAT_UVP_STARTUP_THRE*BAT_UVP_STARTUP_THRE);
-  txmsg.cap_energy_percentage=(int)(100.0f*remaining_energy/all_energy);
+  txmsg.cap_energy_percentage=0x14; //(int)(100.0f*remaining_energy/all_energy);
   
-  uint8_t sendBuffer[7 + dataLength];
-  protocol_pack(sendBuffer, CAPCAN_TXMSG_ID, &txmsg);
-  for(int i = 0; i < (7 + dataLength) / 8 + 1; i++) {
+  protocol_pack(sendBuffer, CAPCAN_TXMSG_ID, txmsg.data);
+  for(int i = 0; i < 3; i++) {
   fdcan2_transmit(CAPCAN_TXMSG_ID, FDCAN_DLC_BYTES_8, (sendBuffer + 8*i));
+  // HAL_Delay(10);
+  // HAL_UART_Transmit_DMA(&huart4, sendBuffer, 17);
   }
 }
 

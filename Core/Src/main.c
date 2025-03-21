@@ -118,7 +118,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   { 
-    HAL_Delay(10);
+    HAL_Delay(100);
     send_capinfo();
     
     /* USER CODE END WHILE */

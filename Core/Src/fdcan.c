@@ -46,12 +46,12 @@ void MX_FDCAN2_Init(void)
   hfdcan2.Init.ProtocolException = DISABLE;
   hfdcan2.Init.NominalPrescaler = 17;
   hfdcan2.Init.NominalSyncJumpWidth = 1;
-  hfdcan2.Init.NominalTimeSeg1 = 4;
-  hfdcan2.Init.NominalTimeSeg2 = 5;
+  hfdcan2.Init.NominalTimeSeg1 = 6;
+  hfdcan2.Init.NominalTimeSeg2 = 3;
   hfdcan2.Init.DataPrescaler = 17;
   hfdcan2.Init.DataSyncJumpWidth = 1;
-  hfdcan2.Init.DataTimeSeg1 = 4;
-  hfdcan2.Init.DataTimeSeg2 = 5;
+  hfdcan2.Init.DataTimeSeg1 = 6;
+  hfdcan2.Init.DataTimeSeg2 = 3;
   hfdcan2.Init.StdFiltersNbr = 28;
   hfdcan2.Init.ExtFiltersNbr = 8;
   hfdcan2.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;

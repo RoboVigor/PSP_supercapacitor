@@ -16,7 +16,8 @@
     "fdcan.h": "c",
     "hrtim.h": "c",
     "g474_fdcan.h": "c",
-    "cap_canmsg_protocal.h": "c"
+    "cap_canmsg_protocal.h": "c",
+    "dcdc.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

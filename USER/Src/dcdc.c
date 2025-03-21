@@ -1,6 +1,9 @@
 #include "dcdc.h"
 #include "cap_canmsg_protocal.h"
+#include "string.h"
+#include "stdlib.h"
 
+uint8_t * temp;
 pwr_adc_t adc;
 pwr_data_t data={.v_bus=20.0f, .tail=VOFA_TAIL};
 
@@ -46,6 +49,7 @@ void dcdc_off(){
 
 
 void dcdc_init(){
+    temp = (uint8_t *)malloc(20);
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, SET);
 
     dcdc_off();
@@ -71,7 +75,7 @@ void dcdc_init(){
     HAL_ADC_Start_DMA(&hadc2, (uint32_t *)&(adc.i_dcdc), 3);
     HAL_ADC_Start_DMA(&hadc3, (uint32_t *)&(adc.i_fw2), 2);
 
-    HAL_UART_Transmit_DMA(&huart4, (uint8_t *)&data, sizeof(data));
+    // HAL_UART_Transmit_DMA(&huart4, (uint8_t *)&data, sizeof(data));
 
     dcdc_setphase(10.0f);
     dcdc_setduty(45.0f);
@@ -283,6 +287,16 @@ void dcdc_mainISR(void){
     total_allow_current=power_limit/data.v_bus;
     data.i_allow=total_allow_current;
     target_current=total_allow_current-data.i_motor;
+    
+    memcpy(temp, &total_allow_current, 4);
+    memcpy((temp + 4), &data.i_motor, 4);
+    memcpy((temp + 8), &target_current, 4);
+    memcpy((temp + 12), &set_current, 4);
+    temp[16] = 0;
+    temp[17] = 0;
+    temp[18] = 0x80;
+    temp[19] = 0x7f;
+    HAL_UART_Transmit_DMA(&huart4, temp, 20);
 
     if(HAL_GetTick()-powerup_time < 100){
         target_current=0.0f;
