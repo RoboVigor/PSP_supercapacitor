@@ -3,20 +3,21 @@
     {
       "name": "windows-gcc-x64",
       "includePath": [
-        "D:/BOX/RV_Respo/PSP_supercapacitor/**",
-        "D:/BOX/RV_Respo/PSP_supercapacitor/Drivers/STM32G4xx_HAL_Driver/Inc",
-        "${vcpkgRoot}/x64-windows/include"
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/Drivers/STM32G4xx_HAL_Driver/Inc"
       ],
       "defines": [
         "_DEBUG",
         "UNICODE",
-        "_UNICODE"
+        "_UNICODE",
+        "STM32G474xx",
+        "USE_HAL_DRIVER"
       ],
       "windowsSdkVersion": "10.0.22621.0",
-      "compilerPath": "cl.exe",
+      "compilerPath": "arm-none-eabi-gcc.exe",
       "cStandard": "${default}",
       "cppStandard": "${default}",
-      "intelliSenseMode": "windows-msvc-x64",
+      "intelliSenseMode": "gcc-arm",
       "configurationProvider": "ms-vscode.makefile-tools"
     }
   ],
